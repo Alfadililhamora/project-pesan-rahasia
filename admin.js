@@ -1,17 +1,17 @@
-// 1. Cek Sesi (Proteksi halaman)
+// admin.js
 if (localStorage.getItem("adminLoggedIn") !== "true") {
     window.location.href = "login.html";
 }
 
-// 2. Konfigurasi Supabase
 const SB_URL = "https://hgddabrckebqtatonjvn.supabase.co";
-const SB_KEY = "sb_publishable_XuBtVYy-FOw_XxLCMkMLTQ_DorVuxdg";
+// GUNAKAN KEY PANJANG YANG SAMA DENGAN SCRIPT.JS
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnZGRhYnJja2VicXRhdG9uanZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MTY2OTIsImV4cCI6MjA4NjQ5MjY5Mn0.g3rjmMEh7MVYvn41F76c4OhdcyRowmoKuoa-9JmMfjQ"; 
+
 const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-// 3. Ambil Data dari Tabel 'reports'
 async function fetchMessages() {
     const { data, error } = await _supabase
-        .from('reports') // Pastikan nama tabel di Supabase adalah 'reports'
+        .from('reports')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -21,23 +21,20 @@ async function fetchMessages() {
     }
 
     const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = ""; // Bersihkan pesan lama
+    tableBody.innerHTML = ""; 
 
     data.forEach(item => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        const row = `<tr>
             <td>${new Date(item.created_at).toLocaleString('id-ID')}</td>
             <td>${item.message}</td>
-        `;
-        tableBody.innerHTML += row.outerHTML;
+        </tr>`;
+        tableBody.innerHTML += row;
     });
 }
 
-// 4. Fungsi Logout
 document.getElementById('btnLogout').addEventListener('click', () => {
     localStorage.removeItem("adminLoggedIn");
     window.location.href = "login.html";
 });
 
-// Jalankan fungsi ambil data saat halaman dimuat
 fetchMessages();
